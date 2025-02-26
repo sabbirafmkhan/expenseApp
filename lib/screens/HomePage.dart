@@ -1,4 +1,5 @@
 import 'package:expense_app/model/expense.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -10,7 +11,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   final List<Expense> _expense = [];
-  final List<String> _category = [
+  final List<String> _categories = [
     'Food',
     'Transport',
     'Entertainment',
@@ -18,9 +19,25 @@ class _HomepageState extends State<Homepage> {
   ];
   double _total = 0.0;
 
+  void _addExpense(
+    String title,
+    double amount,
+    DateTime date,
+    String category,
+  ) {
+    setState(() {
+      _expense.add(
+        Expense(title: title, amount: amount, date: date, category: category),
+      );
+      _total += amount;
+    });
+  }
+
   void _showForm(BuildContext context) {
     TextEditingController titleController = TextEditingController();
     TextEditingController amountController = TextEditingController();
+    String selectedCategory = _categories.first;
+    DateTime selectedDate = DateTime.now();
 
     showModalBottomSheet(
       context: context,
@@ -36,13 +53,55 @@ class _HomepageState extends State<Homepage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
+                controller: titleController,
+                keyboardType: TextInputType.text,
                 decoration: InputDecoration(labelText: "Title"),
               ),
               SizedBox(
                 height: 10,
               ),
               TextField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(labelText: "Amount"),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              DropdownButtonFormField<String>(
+                items: _categories
+                    .map((category) => DropdownMenuItem(
+                        value: category, child: Text(category)))
+                    .toList(),
+                onChanged: (value) => selectedCategory = value!,
+                decoration: InputDecoration(labelText: "Category"),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                    onPressed: () {
+                      if (titleController.text.isEmpty ||
+                          double.tryParse(amountController.text) == null) {
+                        return;
+                      }
+                      _addExpense(
+                          titleController.text,
+                          double.parse(amountController.text),
+                          selectedDate,
+                          selectedCategory);
+                      titleController.clear();
+                      amountController.clear();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "Add Expense",
+                    )),
+              ),
+              SizedBox(
+                height: 20,
               ),
             ],
           ),
@@ -50,7 +109,7 @@ class _HomepageState extends State<Homepage> {
       },
     );
   }
- // 1 hour.
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,9 +152,8 @@ class _HomepageState extends State<Homepage> {
                       child: Text(_expense[index].category),
                     ),
                     title: Text(_expense[index].title),
-                    subtitle: Text(
-                      _expense[index].date.toString(),
-                    ),
+                    subtitle:
+                        Text(DateFormat.yMMMd().format(_expense[index].date)),
                   ),
                 );
               },

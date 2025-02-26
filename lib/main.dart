@@ -19,6 +19,9 @@ class MyApp extends StatelessWidget {
           bodyLarge: TextStyle(fontSize: 18, color: Colors.black),
           bodyMedium: TextStyle(fontSize: 16, color: Colors.black54),
         ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.blue
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.deepPurpleAccent,
           centerTitle: true,
@@ -33,6 +36,9 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyLarge: TextStyle(fontSize: 18, color: Colors.white),
           bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
+        ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.blue,
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.deepPurpleAccent,
